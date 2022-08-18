@@ -1,0 +1,69 @@
+## find the treasure on a map ##
+## pick how big you want the map to be - or maybe make it random sized
+## three guesses to find the "treasure"
+## mark the guesses if incorrect
+## display correct answer if not guessed in three or less guesses
+import random
+
+
+## prints the map and guesses
+def prnt_map(lat, lon, guesses2, treasure):
+    treasure_hidden = True
+    temp_map = []
+    for a in range(0, lon):    # creates blank map with the sizes from lat and lon
+        temp_list = []
+        for b in range(0, lat):
+            temp_list.append("[ ]")
+        temp_map.append(temp_list)
+
+    for g in guesses2:                  # checks guesses2 against temp_map and marks it with a skull for
+        if g == treasure:               # a match with the treasure location or an X for a miss
+            treasure_hidden = False
+            temp_map[g[0]][g[1]] = "[☠️]"
+        else:
+            temp_map[g[0]][g[1]] = "[X]"
+
+    for x in temp_map:              #prints each list in temp_map with X's, " "'s, and a skull if ther is one
+        print(x)
+
+    if treasure_hidden == False and len(guesses2) <= 3:     # lets you know if the treasure was found, what you
+        print("You found the treasure!")                    # have already guessed, and a testing feature to easily
+        return False                                        # find the treasure
+    elif treasure_hidden == True and len(guesses2) < 3:
+        print("\n")
+        print(f"these are your guesses {guesses2}")
+        # print(f"shh... this is where the treasure is {treasure}")
+        return True
+    else:
+        print("\nYou didn't find the treasure.")
+        print("This is where the treasure was.")
+        temp_map[treasure[0]][treasure[1]] = "[☠️]"
+        for x in temp_map:
+            print(x)
+
+
+lat_grid = int(input("enter how wide you want your search to be: "))
+lon_grid = int(input("enter how tall you want your search to be: "))
+
+## random treasure location
+rand_int_a = random.randint(0, lat_grid-1)  # generates one of two random coordinates for the treasure
+rand_int_b = random.randint(0, lon_grid-1)  # generates the second random coordinate for the treasure
+location = (rand_int_a, rand_int_b)         # puts the coordinates together as a tuple
+guesses = 0                                 # integer variable to keep track of guesses
+lat_lon_guesses = []                        # empty list to keep track of guesses
+game_on = True                              # boolean variable to end the game if guessed in less than 3 guesses
+
+while guesses < 3 and game_on:
+    lat_guess = int(input(f"enter a number for the latitude 1 - {lat_grid}: "))
+    lon_guess = int(input(f"enter a number for the longitude 1 - {lon_grid}: "))
+    lat_lon_guesses.append((lat_guess-1, lon_guess-1))                              # append user inputs to the lat_long_guesses
+                                                                                    # list to keep track of them
+    game_on = prnt_map(lat_grid, lon_grid, lat_lon_guesses, location)               # game on variable calling the
+                                                                                    # prnt_map function. prnt_map returns
+                                                                                    # true or false depending on
+                                                                                    # whether or not the treasure was found
+    guesses += 1                                                                    # increment guesses after each pass through the while loop
+
+## display treasure location if not guessed
+if guesses == 3 and game_on:
+    print(f"The treasure was located at {location}.")
